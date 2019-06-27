@@ -5,6 +5,8 @@ function Todo(storageName) {
     this.inputArrow = document.querySelector('.todo__header-arrow');
     this.todoListSettings = this.getFromLocalStorage() || [];
 
+    this.renderFromLocalStorage();
+
     function generateItemId() {
         return '_' + Math.random().toString(36).substr(2, 9);
     }
@@ -34,8 +36,8 @@ function Todo(storageName) {
 
             this.todoListSettings.push(todoItemSettings);
             this.addToLocalStorage(todoItemSettings);
-            // activateSelectAllBtn();
-            // updateAmount();
+            this.activateSelectAllBtn();
+            this.updateAmount();
         }
 
         //Save editing with "Enter" key
@@ -48,6 +50,38 @@ function Todo(storageName) {
 
 Todo.prototype = Object.create(Storage.prototype);
 Todo.prototype.constructor = Todo;
+
+Todo.prototype.renderFromLocalStorage = function () {
+
+
+    const productsInStorage = this.getFromLocalStorage();
+    productsInStorage.forEach((item, index) => {
+        if (index === 0) {
+            this.renderMain(item);
+            if (item.isDone) {
+                const currentItem = document.querySelector(`[data-id=${item.id}]`);
+                currentItem.classList.add('todo__item_done');
+                currentItem.querySelector('.todo__item-check').checked = true;
+            }
+            this.activateSelectAllBtn();
+            // this.switchClearItemsBtn();
+            this.updateAmount();
+            this.inputArrow.classList.add('todo__header-arrow_active');
+        } else {
+            this.renderTodoItem(item);
+            if (item.isDone) {
+                const currentItem = document.querySelector(`[data-id=${item.id}]`);
+                currentItem.classList.add('todo__item_done');
+                currentItem.querySelector('.todo__item-check').checked = true;
+            }
+            this.activateSelectAllBtn();
+            // this.switchClearItemsBtn();
+            this.updateAmount();
+        }
+    });
+
+    this.switchClearItemsBtn();
+}
 
 Todo.prototype.renderMain = function (settings) {
     const buffer = document.createDocumentFragment();
@@ -113,6 +147,38 @@ Todo.prototype.renderTodoItem = function (settings) {
                 <input type="text" class="todo__item-edit">`
 
     listOfItems.appendChild(todoItem);
+}
+
+Todo.prototype.updateAmount = function () {
+    const todoAmount = document.querySelector('.todo__amount');
+    const todoAmountWord = document.querySelector('.todo__count-items');
+
+    const amountArray = this.todoListSettings.filter((item) => {
+        return item.isDone === false;
+    });
+
+    if (todoAmount && todoAmountWord) {
+        todoAmount.textContent = amountArray.length;
+        todoAmountWord.textContent = (amountArray.length === 1) ? 'item' : 'items';
+    }
+}
+
+Todo.prototype.activateSelectAllBtn = function () {
+    if (this.todoListSettings.every(item => item.isDone) && this.todoListSettings.length) { //exception vacuously true (empty array)
+        this.inputArrow.classList.add('todo__header-arrow_done');
+    } else {
+        this.inputArrow.classList.remove('todo__header-arrow_done');
+    }
+}
+
+Todo.prototype.switchClearItemsBtn = function () {
+    const clearItemsBtn = document.querySelector('.todo__footer-btn');
+
+    if (this.todoListSettings.some(item => item.isDone === true)) {
+        clearItemsBtn.classList.add('todo__footer-btn_active');
+    } else {
+        clearItemsBtn.classList.remove('todo__footer-btn_active');
+    }
 }
 
 const todo = new Todo('todoSettings');
