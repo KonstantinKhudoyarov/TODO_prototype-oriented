@@ -12,15 +12,14 @@ Storage.prototype.getFromLocalStorage = function () {
 }
 
 Storage.prototype.addToLocalStorage = function (itemSettings) {
-    const todoSettings = this.getFromLocalStorage();
-    todoSettings.push(itemSettings);
-    localStorage.setItem(this.storageName, JSON.stringify(todoSettings));
+    const settings = this.getFromLocalStorage();
+    settings.push(itemSettings);
+    settings.setItem(this.storageName, JSON.stringify(settings));
 }
 
-Storage.prototype.updateLocalStorage = function () {
-    console.log(this);
+Storage.prototype.updateLocalStorage = function (settings) {
     let todoSettings = this.getFromLocalStorage();
-    todoSettings = this.todoListSettings;//брать массив с настройками с класса TODO
+    todoSettings = settings;
     localStorage.setItem(this.storageName, JSON.stringify(todoSettings));
 }
 //END storage
