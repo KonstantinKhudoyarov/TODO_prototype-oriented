@@ -46,13 +46,14 @@ function Todo(storageName) {
         }
     });
 
+    this.inputArrow.addEventListener('click', this.selectAllItems.bind(this));
+
 }
 
 Todo.prototype = Object.create(Storage.prototype);
 Todo.prototype.constructor = Todo;
 
 Todo.prototype.renderFromLocalStorage = function () {
-
 
     const productsInStorage = this.getFromLocalStorage();
     productsInStorage.forEach((item, index) => {
@@ -64,7 +65,6 @@ Todo.prototype.renderFromLocalStorage = function () {
                 currentItem.querySelector('.todo__item-check').checked = true;
             }
             this.activateSelectAllBtn();
-            // this.switchClearItemsBtn();
             this.updateAmount();
             this.inputArrow.classList.add('todo__header-arrow_active');
         } else {
@@ -75,7 +75,6 @@ Todo.prototype.renderFromLocalStorage = function () {
                 currentItem.querySelector('.todo__item-check').checked = true;
             }
             this.activateSelectAllBtn();
-            // this.switchClearItemsBtn();
             this.updateAmount();
         }
     });
@@ -178,6 +177,54 @@ Todo.prototype.switchClearItemsBtn = function () {
         clearItemsBtn.classList.add('todo__footer-btn_active');
     } else {
         clearItemsBtn.classList.remove('todo__footer-btn_active');
+    }
+}
+
+Todo.prototype.selectAllItems = function () {
+    const todoItems = document.querySelectorAll('.todo__item');
+
+    if (this.inputArrow.classList.contains('todo__header-arrow_done')) {
+        this.todoListSettings.forEach((item, index) => {
+            item.isDone = false;
+            todoItems[index].classList.remove('todo__item_done');
+            todoItems[index].querySelector('.todo__item-check').checked = false;
+        });
+    } else {
+        this.todoListSettings.forEach((item, index) => {
+            if (!item.isDone) {
+                item.isDone = true;
+                todoItems[index].classList.add('todo__item_done');
+                todoItems[index].querySelector('.todo__item-check').checked = true;
+            }
+        });
+    }
+
+    this.activateSelectAllBtn();
+    this.switchClearItemsBtn();
+    this.updateLocalStorage();
+    this.updateAmount();
+}
+
+Todo.prototype.clearCompleted = function () {
+    const listOfItems = document.querySelector('.todo__list');
+    const todoMain = document.querySelector('.todo__main');
+    const footer = document.querySelector('.todo__footer');
+
+    for (let i = 0; i < this.todoListSettings.length; i++) {
+        if (this.todoListSettings[i].isDone) {
+            const element = document.querySelector(`[data-id=${this.todoListSettings[i].id}]`);
+            this.todoListSettings.splice(i, 1);
+            listOfItems.removeChild(element);
+            updateLocalStorage();
+            --i;
+        }
+    }
+    this.switchClearItemsBtn();
+    this.activateSelectAllBtn();
+    if (!this.todoListSettings.length) {
+        todoBody.removeChild(todoMain);
+        todoBody.removeChild(footer);
+        this.inputArrow.classList.remove('todo__header-arrow_active', 'todo__header-arrow_done');
     }
 }
 

@@ -18,10 +18,9 @@ Storage.prototype.addToLocalStorage = function (itemSettings) {
 }
 
 Storage.prototype.updateLocalStorage = function () {
+    console.log(this);
     let todoSettings = this.getFromLocalStorage();
-    todoSettings = todoListSettings;//брать массив с настройками с класса TODO
+    todoSettings = this.todoListSettings;//брать массив с настройками с класса TODO
     localStorage.setItem(this.storageName, JSON.stringify(todoSettings));
 }
-
-const storage = new Storage();
 //END storage
