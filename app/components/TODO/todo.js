@@ -215,7 +215,7 @@ Todo.prototype.clearCompleted = function () {
             const element = document.querySelector(`[data-id=${this.todoListSettings[i].id}]`);
             this.todoListSettings.splice(i, 1);
             listOfItems.removeChild(element);
-            updateLocalStorage();
+            this.updateLocalStorage();
             --i;
         }
     }
