@@ -1,5 +1,6 @@
 //Storage
-function Storage() {
+function Storage(storageName) {
+    this.storageName = storageName;
 
     if (!this.getFromLocalStorage()) {
         const storageCell = [];
@@ -14,7 +15,7 @@ Storage.prototype.getFromLocalStorage = function () {
 Storage.prototype.addToLocalStorage = function (itemSettings) {
     const settings = this.getFromLocalStorage();
     settings.push(itemSettings);
-    settings.setItem(this.storageName, JSON.stringify(settings));
+    localStorage.setItem(this.storageName, JSON.stringify(settings));
 }
 
 Storage.prototype.updateLocalStorage = function (settings) {
@@ -22,4 +23,6 @@ Storage.prototype.updateLocalStorage = function (settings) {
     todoSettings = settings;
     localStorage.setItem(this.storageName, JSON.stringify(todoSettings));
 }
+
+const storage = new Storage('todoSettings');
 //END storage
